@@ -1,0 +1,301 @@
+import os
+import logging
+import boto3
+from botocore.client import Config
+from botocore.exceptions import ClientError, NoCredentialsError
+import io
+import asyncio
+import uuid
+from aiogram import Bot
+from PIL import Image
+import pyheif
+
+class YandexObjectStorage:
+    def __init__(self):
+        self.s3_client = None
+        self.initialized = False
+        self.bucket_name = None
+        self.access_key_id = os.getenv("YC_ACCESS_KEY_ID")
+        self.secret_access_key = os.getenv("YC_SECRET_ACCESS_KEY")
+
+    def initialize_client(self):
+        """Инициализация клиента S3 с проверкой параметров"""
+        try:
+            # Читаем переменные окружения
+            access_key_id = self.access_key_id
+            secret_access_key = self.secret_access_key
+            bucket_name = os.getenv("YC_BUCKET_NAME")
+            endpoint_url = os.getenv("YC_ENDPOINT_URL")
+
+            # Проверяем обязательные переменные
+            if not all([access_key_id, secret_access_key, bucket_name, endpoint_url]):
+                missing = []
+                if not access_key_id: missing.append("YC_ACCESS_KEY_ID")
+                if not secret_access_key: missing.append("YC_SECRET_ACCESS_KEY")
+                if not bucket_name: missing.append("YC_BUCKET_NAME")
+                if not endpoint_url: missing.append("YC_ENDPOINT_URL")
+
+                error_msg = f"Отсутствуют переменные окружения: {', '.join(missing)}"
+                logging.error(error_msg)
+                raise ValueError(error_msg)
+
+            # Создаем клиента
+            self.s3_client = boto3.client(
+                's3',
+                endpoint_url=endpoint_url,
+                aws_access_key_id=access_key_id,
+                aws_secret_access_key=secret_access_key,
+                config=Config(
+                    signature_version='s3v4',
+                    region_name='ru-central1'
+                )
+            )
+
+            # Проверяем подключение
+            self.s3_client.head_bucket(Bucket=bucket_name)
+
+            self.bucket_name = bucket_name
+            self.initialized = True
+            logging.info("Yandex Object Storage client успешно инициализирован")
+            return True
+
+        except NoCredentialsError:
+            logging.error("Не найдены учетные данные для Yandex Object Storage")
+            return False
+        except ClientError as e:
+            error_code = e.response['Error']['Code']
+            if error_code == '404':
+                logging.error(f"Бакет {bucket_name} не найден")
+            elif error_code == '403':
+                logging.error("Доступ к бакету запрещен. Проверьте ключи доступа")
+            else:
+                logging.error(f"Ошибка доступа к бакету: {e}")
+            return False
+        except Exception as e:
+            logging.error(f"Ошибка инициализации Yandex Object Storage: {e}")
+            return False
+
+    async def upload_from_memory(self, file_content, object_name, content_type='application/octet-stream'):
+        """Загружает файл из памяти на Yandex Object Storage"""
+        try:
+            if not self.initialized and not self.initialize_client():
+                return None
+
+            if file_content is None:
+                logging.error("Пустой файл для загрузки")
+                return None
+
+            logging.info(f"Загрузка файла {object_name}, размер: {len(file_content)} байт")
+
+            # Используем run_in_executor для асинхронной загрузки
+            loop = asyncio.get_event_loop()
+            file_obj = io.BytesIO(file_content)
+
+            def _upload():
+                self.s3_client.upload_fileobj(
+                    file_obj,
+                    self.bucket_name,
+                    object_name,
+                    ExtraArgs={
+                        'ContentType': content_type,
+                        'ACL': 'public-read'  # Делаем файл публичным
+                    }
+                )
+
+            await loop.run_in_executor(None, _upload)
+
+            url = f"https://{self.bucket_name}.storage.yandexcloud.net/{object_name}"
+            logging.info(f"Файл успешно загружен: {url}")
+            return url
+
+        except Exception as e:
+            logging.error(f"Ошибка загрузки файла из памяти: {e}", exc_info=True)
+            return None
+
+    async def delete_object(self, object_name):
+        """Удаляет объект из Yandex Object Storage"""
+        try:
+            if not self.initialized and not self.initialize_client():
+                return False
+
+            loop = asyncio.get_event_loop()
+
+            def _delete():
+                self.s3_client.delete_object(
+                    Bucket=self.bucket_name,
+                    Key=object_name
+                )
+
+            await loop.run_in_executor(None, _delete)
+            logging.info(f"Объект {object_name} успешно удален из хранилища")
+            return True
+
+        except Exception as e:
+            logging.error(f"Ошибка удаления объекта {object_name}: {e}", exc_info=True)
+            return False
+
+    async def delete_bouquet_files(self, bouquet):
+        """Удаляет все файлы букета с Yandex Object Storage"""
+        try:
+            deleted_count = 0
+
+            # Удаляем фото
+            for photo_url in bouquet.photos:
+                if photo_url and photo_url.startswith('https://'):
+                    object_name = photo_url.replace(f'https://{self.bucket_name}.storage.yandexcloud.net/', '')
+                    if await self.delete_object(object_name):
+                        deleted_count += 1
+
+            # Удаляем видео
+            if bouquet.video_path and bouquet.video_path.startswith('https://'):
+                object_name = bouquet.video_path.replace(f'https://{self.bucket_name}.storage.yandexcloud.net/', '')
+                if await self.delete_object(object_name):
+                    deleted_count += 1
+
+            logging.info(f"Удалено {deleted_count} файлов букета {bouquet.bouquet_id}")
+            return deleted_count > 0
+
+        except Exception as e:
+            logging.error(f"Ошибка удаления файлов букета: {e}", exc_info=True)
+            return False
+
+
+async def upload_photo_to_storage(bot, file_id, bouquet_id, index):
+    """Загружает фото на Yandex Object Storage и возвращает URL с сохранением качества"""
+    try:
+        logging.info(f"Начинаем загрузку фото {file_id} для букета {bouquet_id}")
+
+        # Скачиваем файл из Telegram
+        file = await bot.get_file(file_id)
+        if not file:
+            logging.error("Не удалось получить информацию о файле от Telegram")
+            return None
+
+        file_path = file.file_path
+        logging.info(f"Файл получен из Telegram: {file_path}")
+
+        # Определяем расширение файла
+        extension = os.path.splitext(file_path)[1] or '.jpg'
+
+        # Генерируем уникальное имя файла
+        unique_name = f"{uuid.uuid4().hex}{extension}"
+        object_name = f"bouquets/{bouquet_id}/{unique_name}"
+        logging.info(f"Генерируем имя объекта: {object_name}")
+
+        # Скачиваем файл в память
+        downloaded_file = await bot.download_file(file_path)
+        if not downloaded_file:
+            logging.error("Не удалось скачать файл из Telegram")
+            return None
+
+        # Читаем содержимое файла
+        file_content = downloaded_file.read()
+        if not file_content:
+            logging.error("Скачанный файл пуст")
+            return None
+
+        # Определяем MIME-тип на основе расширения
+        mime_types = {
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg',
+            '.png': 'image/png',
+            '.gif': 'image/gif',
+            '.bmp': 'image/bmp',
+            '.webp': 'image/webp'
+        }
+        content_type = mime_types.get(extension.lower(), 'image/jpeg')
+
+        # Загружаем на Yandex Object Storage
+        yandex_storage = YandexObjectStorage()
+        photo_url = await yandex_storage.upload_from_memory(
+            file_content,
+            object_name,
+            content_type=content_type
+        )
+
+        if photo_url:
+            logging.info(f"Фото успешно загружено на сервер: {photo_url}")
+        else:
+            logging.error("Не удалось загрузить фото на сервер")
+
+        return photo_url
+    except Exception as e:
+        logging.error(f"Ошибка при загрузке фото на сервер: {e}", exc_info=True)
+        return None
+
+
+async def upload_video_to_storage(bot, file_id, bouquet_id):
+    """Загружает видео на Yandex Object Storage и возвращает URL"""
+    try:
+        logging.info(f"Начинаем загрузку видео {file_id} для букета {bouquet_id}")
+
+        # Скачиваем файл из Telegram
+        file = await bot.get_file(file_id)
+        if not file:
+            logging.error("Не удалось получить информацию о видео файле от Telegram")
+            return None
+
+        file_path = file.file_path
+        logging.info(f"Видео файл получен из Telegram: {file_path}")
+
+        # Генерируем уникальное имя файла
+        file_extension = os.path.splitext(file_path)[1] or '.mp4'
+        unique_name = f"{uuid.uuid4().hex}{file_extension}"
+        object_name = f"bouquets/{bouquet_id}/{unique_name}"
+        logging.info(f"Генерируем имя объекта: {object_name}")
+
+        # Скачиваем файл
+        downloaded_file = await bot.download_file(file_path)
+        if not downloaded_file:
+            logging.error("Не удалось скачать видео файл из Telegram")
+            return None
+
+        file_content = downloaded_file.read()
+        if not file_content:
+            logging.error("Скачанный видео файл пуст")
+            return None
+
+        logging.info(f"Размер видео файла: {len(file_content)} байт")
+
+        # Загружаем на Yandex Object Storage
+        yandex_storage = YandexObjectStorage()
+        video_url = await yandex_storage.upload_from_memory(
+            file_content,
+            object_name,
+            content_type='video/mp4'
+        )
+
+        if video_url:
+            logging.info(f"Видео успешно загружено на сервер: {video_url}")
+        else:
+            logging.error("Не удалось загрузить видео на сервер")
+
+        return video_url
+    except Exception as e:
+        logging.error(f"Ошибка при загрузке видео на сервер: {e}", exc_info=True)
+        return None
+
+
+async def convert_heic_to_jpeg(heic_data: bytes) -> bytes:
+    """Конвертирует HEIC в JPEG"""
+    try:
+        heif_file = pyheif.read(heic_data)
+        image = Image.frombytes(
+            heif_file.mode,
+            heif_file.size,
+            heif_file.data,
+            "raw",
+            heif_file.mode,
+            heif_file.stride,
+        )
+
+        img_byte_arr = io.BytesIO()
+        image.save(img_byte_arr, format='JPEG')
+        return img_byte_arr.getvalue()
+    except Exception as e:
+        logging.error(f"Ошибка конвертации HEIC в JPEG: {e}")
+        return None
+
+
+# Глобальный экземпляр хранилища
+yandex_storage = YandexObjectStorage()
