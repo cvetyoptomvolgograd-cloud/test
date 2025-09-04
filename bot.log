@@ -7078,3 +7078,75 @@ WHERE bouquets.bouquet_id = ?
 2025-09-04 15:15:35,641 - aiogram.dispatcher - INFO - Polling stopped for bot @foto_save_catalog_bot id=8413666974 - 'Каталог товаров'
 2025-09-04 15:15:35,641 - aiogram.dispatcher - INFO - Polling stopped
 2025-09-04 15:15:35,893 - __main__ - INFO - Работа бота завершена
+2025-09-04 15:20:54,851 - __main__ - INFO - Попытка запуска бота 1/5
+2025-09-04 15:20:54,855 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-04 15:20:54,855 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("users")
+2025-09-04 15:20:54,855 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-09-04 15:20:54,856 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("categories")
+2025-09-04 15:20:54,856 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-09-04 15:20:54,856 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("products")
+2025-09-04 15:20:54,856 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-09-04 15:20:54,856 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("bouquets")
+2025-09-04 15:20:54,856 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-09-04 15:20:54,856 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-04 15:20:54,857 - __main__ - INFO - База данных инициализирована
+2025-09-04 15:20:54,879 - __main__ - INFO - Redis подключен успешно
+2025-09-04 15:20:54,899 - __main__ - INFO - Бот успешно создан и настроен
+2025-09-04 15:20:54,899 - __main__ - INFO - Запуск polling...
+2025-09-04 15:20:54,899 - aiogram.dispatcher - INFO - Start polling
+2025-09-04 15:20:59,556 - aiogram.dispatcher - INFO - Run polling for bot @foto_save_catalog_bot id=8413666974 - 'Каталог товаров'
+2025-09-04 15:44:22,412 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 54] Connection reset by peer
+2025-09-04 15:44:22,455 - aiogram.dispatcher - WARNING - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8413666974)
+2025-09-04 15:44:35,379 - aiogram.dispatcher - INFO - Connection established (tryings = 1, bot id = 8413666974)
+2025-09-04 16:00:15,591 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 54] Connection reset by peer
+2025-09-04 16:00:15,595 - aiogram.dispatcher - WARNING - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8413666974)
+2025-09-04 16:17:28,133 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 16:17:28,134 - aiogram.dispatcher - WARNING - Sleep for 1.370795 seconds and try again... (tryings = 1, bot id = 8413666974)
+2025-09-04 16:32:49,117 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 16:32:49,118 - aiogram.dispatcher - WARNING - Sleep for 1.751351 seconds and try again... (tryings = 2, bot id = 8413666974)
+2025-09-04 16:48:43,040 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 16:48:43,099 - aiogram.dispatcher - WARNING - Sleep for 2.130666 seconds and try again... (tryings = 3, bot id = 8413666974)
+2025-09-04 17:05:16,026 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 17:05:16,026 - aiogram.dispatcher - WARNING - Sleep for 2.698475 seconds and try again... (tryings = 4, bot id = 8413666974)
+2025-09-04 17:21:48,070 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 17:21:48,071 - aiogram.dispatcher - WARNING - Sleep for 3.601598 seconds and try again... (tryings = 5, bot id = 8413666974)
+2025-09-04 17:38:00,982 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 17:38:00,982 - aiogram.dispatcher - WARNING - Sleep for 4.688159 seconds and try again... (tryings = 6, bot id = 8413666974)
+2025-09-04 17:53:50,037 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 17:53:50,038 - aiogram.dispatcher - WARNING - Sleep for 4.997819 seconds and try again... (tryings = 7, bot id = 8413666974)
+2025-09-04 18:00:29,895 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 18:00:29,895 - aiogram.dispatcher - WARNING - Sleep for 4.851667 seconds and try again... (tryings = 8, bot id = 8413666974)
+2025-09-04 18:00:45,486 - aiogram.dispatcher - INFO - Connection established (tryings = 9, bot id = 8413666974)
+2025-09-04 18:17:49,700 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 54] Connection reset by peer
+2025-09-04 18:17:49,702 - aiogram.dispatcher - WARNING - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8413666974)
+2025-09-04 18:35:46,533 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 54] Connection reset by peer
+2025-09-04 18:35:46,625 - aiogram.dispatcher - WARNING - Sleep for 1.324198 seconds and try again... (tryings = 1, bot id = 8413666974)
+2025-09-04 18:53:15,473 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 54] Connection reset by peer
+2025-09-04 18:53:15,556 - aiogram.dispatcher - WARNING - Sleep for 1.694191 seconds and try again... (tryings = 2, bot id = 8413666974)
+2025-09-04 19:10:05,498 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 54] Connection reset by peer
+2025-09-04 19:10:05,500 - aiogram.dispatcher - WARNING - Sleep for 2.157855 seconds and try again... (tryings = 3, bot id = 8413666974)
+2025-09-04 19:26:21,373 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 54] Connection reset by peer
+2025-09-04 19:26:21,447 - aiogram.dispatcher - WARNING - Sleep for 2.589027 seconds and try again... (tryings = 4, bot id = 8413666974)
+2025-09-04 19:41:39,351 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 54] Connection reset by peer
+2025-09-04 19:41:39,435 - aiogram.dispatcher - WARNING - Sleep for 3.429127 seconds and try again... (tryings = 5, bot id = 8413666974)
+2025-09-04 19:59:35,308 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 54] Connection reset by peer
+2025-09-04 19:59:35,385 - aiogram.dispatcher - WARNING - Sleep for 4.463574 seconds and try again... (tryings = 6, bot id = 8413666974)
+2025-09-04 20:15:27,345 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 20:15:27,363 - aiogram.dispatcher - WARNING - Sleep for 4.930926 seconds and try again... (tryings = 7, bot id = 8413666974)
+2025-09-04 20:30:52,221 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 20:30:52,302 - aiogram.dispatcher - WARNING - Sleep for 5.079723 seconds and try again... (tryings = 8, bot id = 8413666974)
+2025-09-04 20:47:12,260 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 20:47:12,261 - aiogram.dispatcher - WARNING - Sleep for 4.968604 seconds and try again... (tryings = 9, bot id = 8413666974)
+2025-09-04 21:03:20,212 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 21:03:20,213 - aiogram.dispatcher - WARNING - Sleep for 5.024134 seconds and try again... (tryings = 10, bot id = 8413666974)
+2025-09-04 21:30:00,066 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientConnectorError: Cannot connect to host api.telegram.org:443 ssl:default [Connection reset by peer]
+2025-09-04 21:30:00,144 - aiogram.dispatcher - WARNING - Sleep for 4.989376 seconds and try again... (tryings = 11, bot id = 8413666974)
+2025-09-04 21:30:17,423 - aiogram.dispatcher - INFO - Connection established (tryings = 12, bot id = 8413666974)
+2025-09-04 21:47:56,008 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 54] Connection reset by peer
+2025-09-04 21:47:56,084 - aiogram.dispatcher - WARNING - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8413666974)
+2025-09-04 22:02:54,011 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 54] Connection reset by peer
+2025-09-04 22:02:54,089 - aiogram.dispatcher - WARNING - Sleep for 1.401745 seconds and try again... (tryings = 1, bot id = 8413666974)
+2025-09-04 22:03:08,860 - aiogram.dispatcher - INFO - Connection established (tryings = 2, bot id = 8413666974)
+2025-09-04 22:09:49,753 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 54] Connection reset by peer
+2025-09-04 22:09:49,833 - aiogram.dispatcher - WARNING - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8413666974)
+2025-09-04 22:10:02,010 - aiogram.dispatcher - INFO - Connection established (tryings = 1, bot id = 8413666974)
