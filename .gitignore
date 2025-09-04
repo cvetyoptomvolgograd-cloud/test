@@ -1,2 +1,26 @@
-# Env files .env .env.local .env.*.local.env
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+env/
+venv/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Logs & runtime
+*.log
+*.tmp
+
+# Databases & uploads
+*.db
+media/
+uploads/
+
+# Env files (ключи храним локально)
 .env
+.env.local
+.env.*.local
